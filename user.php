@@ -11427,13 +11427,218 @@ namespace Tqdev\PhpCrudApi {
         // 'debug' => false,
         // middlewares 
         'middlewares' => 'dbAuth,authorization,sanitation,validation',
-        'dbAuth.mode' => 'optional',//'required'
         'authorization.tableHandler' => function ($operation, $tableName) {
+            // GET    /records/{table}      - list      - lists records
+            // POST   /records/{table}      - create    - creates records
+            // GET    /records/{table}/{id} - read      - reads a record by primary key
+            // PUT    /records/{table}/{id} - update    - updates columns of a record by primary key
+            // DELETE /records/{table}/{id} - delete    - deletes a record by primary key
+            // PATCH  /records/{table}/{id} - increment - increments columns of a record by primary key
 
-            
-            return $tableName != 'users';
+             // extract user id from session
+             if(array_key_exists('user',$_SESSION)&&array_key_exists('user_type',$_SESSION['user']))
+                $user_type=$_SESSION['user']['user_type'];
+            else{
+                $user_type=null;
+            }
+            // return true for user type admin with request to users
+            // for other user type, prohibit access to user table
+            if(!is_null($user_type)){
+                
+                return ($user_type == 'admin' && $tableName == 'users') ? true : $tableName != 'users';
+            }
+
+
+            $tablesPermissions=array(
+                "users" => "lcrudi",
+            );
+            if(!array_key_exists($tableName,$tablesPermissions)){
+                return(false);
+            }
+            $op=$operation[0];
+            $ret=strpos($tablesPermissions[$tableName],$op)!==false;
+            if(!$ret)testlog("failed permission for operation: ".$operation." table: ".$tableName);
+            return($ret);
         },
+            'authorization.columnHandler' => function ($operation, $tableName, $columnName) {
+                global $sessionToReset;
 
+                $colsPermissions=array(
+                    "users" => array(
+                        "user_id" => "lcru",
+                        "username" => "lcru",
+                        "password" => "cu",
+                        "user_type" => "lcru",
+                        "full_name" => "lcru",
+                        "identity_id" =>"lcru",
+                        "active" =>"lcru",
+                        "create_time_stamp"=>"lcru",
+                    ),
+                );
+                if(!array_key_exists($tableName,$colsPermissions)){
+                    testlog("!array_key_exists(tableName,colsPermissions): ".$operation." table: ".$tableName." column: ".$columnName);
+                    return(false);
+                }
+                if(!array_key_exists($columnName,$colsPermissions[$tableName])){
+                    testlog("!array_key_exists(columnName,colsPermissions[tableName]): ".$operation." table: ".$tableName." column: ".$columnName);
+                    return(false);
+                }
+                $op=$operation[0];
+                $ret=strpos($colsPermissions[$tableName][$columnName],$op)!==false;
+                if(!$ret)testlog("failed permission for operation: ".$operation." table: ".$tableName." column: ".$columnName);
+                if($ret&&$tableName=="users"&&$operation=="update"&&($columnName=="username"||$columnName=="password")){
+                    $sessionToReset=true;
+                }
+                return($ret);
+            },
+            'authorization.recordHandler' => function ($operation, $tableName) {
+                // extract user id from session
+                if(array_key_exists('user',$_SESSION)&&array_key_exists('user_id',$_SESSION['user']))
+                    $userid=$_SESSION['user']['user_id'];
+                else{
+                    $userid=null;
+                    testlog("anonymous");
+                }
+                if($tableName == 'users'){
+                    if(is_null($userid)&&$operation!='create'){
+                        testlog("anonymous user can only create in the users table");
+                        return('filter=user_id,eq,-1');
+                    }
+                    switch($operation){
+                        case 'create':
+                            return('');
+                            break;
+                        case 'list':
+                            /**returns only the current user record as list
+                             * return('filter=id,eq,'.$userid);
+                            */
+                            
+                            /**returns all users */
+                            return('');
+                            break;
+                        case 'read':
+                            return('/'.$userid);
+                            break;
+                        case 'update':
+                            return('filter=user_id,eq,'.$userid);
+                            break;
+                        case 'delete':
+                            return('filter=user_id,eq,'.$userid);
+                            break;
+                        default:
+                            testlog("unexpected operation requested on ".$tableName.", operation: ".$operation.", user id:".$userid);
+                            return('filter=user_id,eq,-1');
+                            break;
+                    }
+                }
+                testlog("unexpected table in authorization.recordHandler: ".$tableName.", operation: ".$operation.", user id:".$userid);
+                return('');
+            },
+            'validation.handler' => function ($operation, $tableName, $column, $value, $context) {
+                switch($column['type']){
+                    case 'integer':
+                        if(!is_numeric($value))
+                            return('must be numeric');
+                        if(strlen($value)>20)
+                            return('exceeds range');
+                    break;
+                    case 'bigint':
+                        if(!is_numeric($value))
+                            return('must be numeric');
+                        if(strlen($value)>20)
+                            return('exceeds range');
+                    break;
+                    case 'varchar':
+                        if(strlen($value)>$column['length'])
+                            return('too long');
+                        if(!mb_check_encoding($value))
+                            return('wrong encoding');
+                    break;
+                    case 'decimal':
+                        if(!is_float($value)&&!is_numeric($value))
+                            return('not a float');
+                    break;
+                    case 'float':
+                        if(!is_float($value)&&!is_numeric($value))
+                            return('not a float');
+                    break;
+                    case 'double':
+                        if(!is_float($value)&&!is_numeric($value))
+                            return('not a float');
+                    break;
+                    case 'boolean':
+                        if($value!=0&&$value!=1)
+                            return('not a valid boolean');
+                    break;
+                    case 'date':
+                        $date_array=explode('-',$value);
+                        if(count($date_array)!=3)
+                            return('invalid date format use yyyy-mm-dd');
+                        if(!checkdate($date_array[1], $date_array[2], $date_array[0]))
+                            return('not a valid date');
+                    break;
+                    case 'time':
+                        $time_array=explode(':',$value);
+                        if(count($time_array)!=3)
+                            return('invalid time format use hh:mm:ss');
+                        foreach($time_array as $t)
+                            if(!is_numeric($t))
+                                return('non-numeric time value');
+                        if($time_array[1]<0||$time_array[2]<0||$time_array[0]<-838||$time_array[1]>59||$time_array[2]>59||$time_array[0]>838)
+                            return('not a valid time');
+                    break;
+                    case 'timestamp':
+                        $split_timestamp=explode(' ',$value);
+                        if(count($split_timestamp)!=2)
+                            return('invalid timestamp format user yyyy-mm-dd hh:mm:ss');
+                        $date_array=explode('-',$split_timestamp[0]);
+                        if(count($date_array)!=3)
+                            return('invalid date format use yyyy-mm-dd');
+                        if(!checkdate($date_array[1], $date_array[2], $date_array[0]))
+                            return('not a valid date');
+                        $time_array=explode(':',$split_timestamp[1]);
+                        if(count($time_array)!=3)
+                            return('invalid time format use hh:mm:ss');
+                        foreach($time_array as $t)
+                            if(!is_numeric($t))
+                                return('non-numeric time value');
+                        if($time_array[1]<0||$time_array[2]<0||$time_array[0]<0||$time_array[1]>59||$time_array[2]>59||$time_array[0]>23)
+                            return('not a valid time');
+                    break;
+                    case 'clob':
+                        if(!mb_check_encoding($value))
+                            return('wrong encoding');
+                    break;
+                    case 'blob':
+                        if(!mb_check_encoding($value))
+                            return('wrong encoding');
+                    break;
+                    case 'varbinary':
+                        if(((strlen($value) * 3 / 4) - substr_count(substr($value, -2), '='))>$column['length'])
+                            return('too long');
+                        if(!mb_check_encoding($value))
+                            return('wrong encoding');
+                    break;
+                    case 'geometry':
+                        if(!mb_check_encoding($value))
+                            return('wrong encoding');
+                    break;
+                    default:
+                        testlog("unknown type: ".$column['type']);
+                    break;
+                }
+                return(true);
+            },
+            'dbAuth.mode' => 'anonymous',//'required',
+            'dbAuth.usersTable' => 'users',
+            'dbAuth.usernameColumn' => 'username',
+            'dbAuth.passwordColumn' => 'password',
+            'dbAuth.returnedColumns' => 'id,create_time_stamp,username',
+            'sanitation.handler' => function ($operation, $tableName, $column, $value) {
+                if($tableName == 'users' && $column['name'] == 'password')
+                    return(password_hash($value,PASSWORD_DEFAULT));
+                return is_string($value) ? strip_tags($value) : $value;
+            },
 
         
     ]);
