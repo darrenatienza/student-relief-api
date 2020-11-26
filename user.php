@@ -11435,19 +11435,7 @@ namespace Tqdev\PhpCrudApi {
             // DELETE /records/{table}/{id} - delete    - deletes a record by primary key
             // PATCH  /records/{table}/{id} - increment - increments columns of a record by primary key
 
-             // extract user id from session
-             if(array_key_exists('user',$_SESSION)&&array_key_exists('user_type',$_SESSION['user']))
-                $user_type=$_SESSION['user']['user_type'];
-            else{
-                $user_type=null;
-            }
-            // return true for user type admin with request to users
-            // for other user type, prohibit access to user table
-            if(!is_null($user_type)){
-                
-                return ($user_type == 'admin' && $tableName == 'users') ? true : $tableName != 'users';
-            }
-
+            
 
             $tablesPermissions=array(
                 "users" => "lcrudi",
@@ -11465,14 +11453,14 @@ namespace Tqdev\PhpCrudApi {
 
                 $colsPermissions=array(
                     "users" => array(
-                        "user_id" => "lcru",
+                        "user_id" => "lr", //for db created fields
                         "username" => "lcru",
                         "password" => "cu",
                         "user_type" => "lcru",
                         "full_name" => "lcru",
                         "identity_id" =>"lcru",
                         "active" =>"lcru",
-                        "create_time_stamp"=>"lcru",
+                        "create_time_stamp"=>"lr", //for db created fields
                     ),
                 );
                 if(!array_key_exists($tableName,$colsPermissions)){

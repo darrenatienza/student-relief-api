@@ -11427,7 +11427,7 @@ namespace Tqdev\PhpCrudApi {
         // 'debug' => false,
         // middlewares 
         'middlewares' => 'dbAuth,authorization,sanitation,validation',
-        'dbAuth.mode' => 'optional',//'required'
+        'dbAuth.mode' => 'required',//'required'
         'authorization.tableHandler' => function ($operation, $tableName) {
 
             
