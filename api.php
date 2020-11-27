@@ -11431,7 +11431,7 @@ namespace Tqdev\PhpCrudApi {
         'middlewares' => 'dbAuth,authorization,sanitation,validation',
         'dbAuth.mode' => 'optional',//'required'
         'authorization.tableHandler' => function ($operation, $tableName) {
-            $valid = false;
+            $valid = true;
             if(!array_key_exists('user',$_SESSION) && $operation === 'create' && $tableName === 'students'){
                 $valid = true;
             }
