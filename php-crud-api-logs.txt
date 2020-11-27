@@ -2,3 +2,30 @@
 2020-11-26 17:26:04[T]: failed permission for operation: read table: users column: password
 2020-11-26 17:26:04[T]: anonymous
 2020-11-26 17:26:04[T]: anonymous user can only create in the users table
+2020-11-27 05:47:05[T]: failed permission for operation: read table: users column: password
+2020-11-27 05:48:09[T]: failed permission for operation: update table: users column: user_id
+2020-11-27 05:48:09[T]: failed permission for operation: update table: users column: create_time_stamp
+2020-11-27 06:01:14[T]: failed permission for operation: read table: users column: password
+2020-11-27 06:01:27[T]: failed permission for operation: update table: users column: user_id
+2020-11-27 06:01:27[T]: failed permission for operation: update table: users column: create_time_stamp
+2020-11-27 06:04:32[T]: failed permission for operation: read table: users column: password
+2020-11-27 06:04:44[T]: failed permission for operation: update table: users column: user_id
+2020-11-27 06:04:44[T]: failed permission for operation: update table: users column: create_time_stamp
+2020-11-27 06:10:27[T]: failed permission for operation: update table: users column: user_id
+2020-11-27 06:10:27[T]: failed permission for operation: update table: users column: create_time_stamp
+2020-11-27 06:10:57[T]: failed permission for operation: update table: users column: user_id
+2020-11-27 06:10:57[T]: failed permission for operation: update table: users column: create_time_stamp
+2020-11-27 06:11:48[T]: destroying session after update to username or password
+2020-11-27 06:13:23[T]: failed permission for operation: read table: users column: password
+2020-11-27 06:13:26[T]: destroying session after update to username or password
+2020-11-27 09:34:04[T]: failed permission for operation: create table: users column: user_id
+2020-11-27 09:34:04[T]: failed permission for operation: create table: users column: create_time_stamp
+2020-11-27 09:34:15[T]: failed permission for operation: create table: users column: user_id
+2020-11-27 09:34:15[T]: failed permission for operation: create table: users column: create_time_stamp
+2020-11-27 09:35:11[T]: failed permission for operation: read table: users column: password
+2020-11-27 09:35:19[T]: failed permission for operation: update table: users column: user_id
+2020-11-27 09:35:19[T]: failed permission for operation: update table: users column: create_time_stamp
+2020-11-27 09:40:18[T]: failed permission for operation: create table: users column: user_id
+2020-11-27 09:40:18[T]: failed permission for operation: create table: users column: create_time_stamp
+2020-11-27 09:43:27[T]: failed permission for operation: create table: users column: user_id
+2020-11-27 09:43:27[T]: failed permission for operation: create table: users column: create_time_stamp

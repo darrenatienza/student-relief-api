@@ -11621,7 +11621,7 @@ namespace Tqdev\PhpCrudApi {
             'dbAuth.usersTable' => 'users',
             'dbAuth.usernameColumn' => 'username',
             'dbAuth.passwordColumn' => 'password',
-            'dbAuth.returnedColumns' => 'id,create_time_stamp,username',
+            'dbAuth.returnedColumns' => 'user_id,create_time_stamp,username',
             'sanitation.handler' => function ($operation, $tableName, $column, $value) {
                 if($tableName == 'users' && $column['name'] == 'password')
                     return(password_hash($value,PASSWORD_DEFAULT));

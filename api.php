@@ -1,4 +1,6 @@
 <?php
+
+
 /**
  * PHP-CRUD-API v2              License: MIT
  * Maurits van der Schee: maurits@vdschee.nl
@@ -11427,11 +11429,20 @@ namespace Tqdev\PhpCrudApi {
         // 'debug' => false,
         // middlewares 
         'middlewares' => 'dbAuth,authorization,sanitation,validation',
-        'dbAuth.mode' => 'required',//'required'
+        'dbAuth.mode' => 'optional',//'required'
         'authorization.tableHandler' => function ($operation, $tableName) {
-
-            
-            return $tableName != 'users';
+            $valid = false;
+            if(!array_key_exists('user',$_SESSION) && $operation === 'create' && $tableName === 'students'){
+                $valid = true;
+            }
+            if(!array_key_exists('user',$_SESSION) && $operation === 'create' && $tableName === 'volunteers'){
+                $valid = true;
+            }
+            if(array_key_exists('user',$_SESSION) && $tableName != 'users'){
+                
+                $valid = true;
+            }   
+            return $valid;
         },
 
 
@@ -11440,14 +11451,5 @@ namespace Tqdev\PhpCrudApi {
     $request = RequestFactory::fromGlobals();
     $api = new Api($config);
     $response = $api->handle($request);
-    //on update username and password of user
-    if($sessionToReset){
-        $c=$response->getBody()->getContents();
-        if(isset($c)&&ctype_digit($c)&&intval($c)>0){
-            testlog("destroying session after update to username or password");
-            session_destroy();
-        }
-        $response->getBody()->rewind();
-    }
     ResponseUtils::output($response);
 }
