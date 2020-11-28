@@ -11,6 +11,7 @@ $setting = [
     'middlewares' => 'dbAuth,authorization,sanitation,validation',
     'dbAuth.mode' => 'optional',//'required'
     'dbAuth.registerUser'=> '1',
+    'dbAuth.passwordLength' => '5',
     'authorization.tableHandler' => function ($operation, $tableName) {
         $valid = true;
         if(!array_key_exists('user',$_SESSION) && $operation === 'create' && $tableName === 'students'){
