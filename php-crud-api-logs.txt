@@ -29,3 +29,14 @@
 2020-11-27 09:40:18[T]: failed permission for operation: create table: users column: create_time_stamp
 2020-11-27 09:43:27[T]: failed permission for operation: create table: users column: user_id
 2020-11-27 09:43:27[T]: failed permission for operation: create table: users column: create_time_stamp
+2020-11-28 04:42:04[T]: failed permission for operation: list table: users column: password
+2020-11-28 04:42:04[T]: anonymous
+2020-11-28 04:42:04[T]: anonymous user can only create in the users table
+2020-11-28 04:43:34[T]: failed permission for operation: list table: users column: password
+2020-11-28 04:43:34[T]: anonymous
+2020-11-28 04:43:34[T]: anonymous user can only create in the users table
+2020-11-28 14:46:07[T]: failed permission for operation: list table: users column: password
+2020-11-28 14:46:07[T]: anonymous
+2020-11-28 14:46:07[T]: anonymous user can only create in the users table
+2020-11-28 15:17:19[T]: failed permission for operation: unknown table: users column: user_id
+2020-11-28 15:17:19[T]: failed permission for operation: unknown table: users column: create_time_stamp
