@@ -5343,7 +5343,7 @@ namespace Tqdev\PhpCrudApi\Database {
             switch ($this->driver) {
                 case 'mysql':
                     return $options + [
-                        \PDO::ATTR_EMULATE_PREPARES => false,
+                        \PDO::ATTR_EMULATE_PREPARES => true,
                         \PDO::MYSQL_ATTR_FOUND_ROWS => true,
                         \PDO::ATTR_PERSISTENT => true,
                     ];

@@ -10,7 +10,7 @@ $setting = [
     // middlewares 
     'middlewares' => 'dbAuth,authorization,sanitation,validation',
     'dbAuth.mode' => 'optional',//'required'
-    'dbAuth.registerUser'=> '1',
+    'dbAuth.registerUser'=> '1', // enable user registration
     'dbAuth.passwordLength' => '5',
     'authorization.tableHandler' => function ($operation, $tableName) {
         $valid = true;
