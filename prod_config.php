@@ -3,9 +3,9 @@ $setting = [
     'driver' => 'mysql',
     'address' => 'localhost',
     'port' => '3306',
-    'username' => 'root',
-    'password' => '',
-    'database' => 'relief',
+    'username' => 'u488180748_spartan_user',
+    'password' => 'd8jK${i#gs~aN2%u',
+    'database' => 'u488180748_spartan_relief',
     // 'debug' => false,
     // middlewares 
     'middlewares' => 'dbAuth,authorization,sanitation,validation',
